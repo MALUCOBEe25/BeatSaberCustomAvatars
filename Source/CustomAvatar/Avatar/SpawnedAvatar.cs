@@ -162,8 +162,6 @@ namespace CustomAvatar.Avatar
                 _logger.Warning("Avatar root position is not at origin; resizing by height and floor adjust may not work properly.");
             }
 
-            DontDestroyOnLoad(this);
-
             _gameScenesHelper.transitionDidFinish += OnTransitionDidFinish;
         }
 
