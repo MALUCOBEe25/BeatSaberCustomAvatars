@@ -14,14 +14,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using CustomAvatar.Configuration;
 using CustomAvatar.Logging;
 using CustomAvatar.Tracking;
 using CustomAvatar.Utilities;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
@@ -52,6 +52,7 @@ namespace CustomAvatar.Avatar
 
         private string _switchingToPath;
         private Settings.AvatarSpecificSettings _currentAvatarSettings;
+        private Transform _avatarContainer;
 
         [Inject]
         private PlayerAvatarManager(DiContainer container, ILoggerProvider loggerProvider, AvatarLoader avatarLoader, Settings settings, AvatarSpawner spawner, BeatSaberUtilities beatSaberUtilities, FloorController floorController)
@@ -72,13 +73,16 @@ namespace CustomAvatar.Avatar
             _floorController.floorPositionChanged += OnFloorPositionChanged;
             BeatSaberEvents.playerHeightChanged += OnPlayerHeightChanged;
 
+            _avatarContainer = new GameObject("Avatar Container").transform;
+            Object.DontDestroyOnLoad(_avatarContainer);
+
             LoadAvatarInfosFromFile();
             LoadAvatarFromSettingsAsync();
         }
 
         public void Dispose()
         {
-            Object.Destroy(currentlySpawnedAvatar);
+            Object.Destroy(_avatarContainer.gameObject);
 
             _settings.moveFloorWithRoomAdjustChanged -= OnMoveFloorWithRoomAdjustChanged;
             BeatSaberEvents.playerHeightChanged -= OnPlayerHeightChanged;
@@ -185,11 +189,10 @@ namespace CustomAvatar.Avatar
                 _avatarInfos.Add(avatarInfo.fileName, avatarInfo);
             }
 
-            currentlySpawnedAvatar = _spawner.SpawnRoomAdjustedAvatar(avatar, _container.Instantiate<VRPlayerInput>());
+            currentlySpawnedAvatar = _spawner.SpawnAvatar(avatar, _container.Instantiate<VRPlayerInput>(), _avatarContainer);
             _currentAvatarSettings = _settings.GetAvatarSettings(avatar.fileName);
 
             ResizeCurrentAvatar();
-            SetCurrentAvatarVerticalPosition(_floorController.floorPosition);
             UpdateFirstPersonVisibility();
 
             avatarChanged?.Invoke(currentlySpawnedAvatar);
@@ -327,14 +330,12 @@ namespace CustomAvatar.Avatar
 
         private void OnFloorPositionChanged(float verticalPosition)
         {
-            SetCurrentAvatarVerticalPosition(verticalPosition);
+            SetAvatarVerticalPosition(verticalPosition);
         }
 
-        private void SetCurrentAvatarVerticalPosition(float verticalPosition)
+        private void SetAvatarVerticalPosition(float verticalPosition)
         {
-            Vector3 position = currentlySpawnedAvatar.transform.position;
-            position.y = verticalPosition;
-            currentlySpawnedAvatar.transform.position = position;
+            _avatarContainer.position = new Vector3(0, verticalPosition, 0);
         }
 
         private List<string> GetAvatarFileNames()
