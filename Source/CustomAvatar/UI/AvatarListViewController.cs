@@ -23,6 +23,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using CustomAvatar.Avatar;
+using CustomAvatar.Player;
 using CustomAvatar.Utilities;
 using HMUI;
 using TMPro;

@@ -19,7 +19,6 @@ extern alias BeatSaberFinalIK;
 using AvatarScriptPack;
 using CustomAvatar.Exceptions;
 using CustomAvatar.Logging;
-using CustomAvatar.Tracking;
 using CustomAvatar.Utilities;
 using System;
 using System.IO;
@@ -177,7 +176,7 @@ namespace CustomAvatar.Avatar
             // TODO using animator here probably isn't a good idea, use VRIKManager references instead?
             Animator animator = prefab.GetComponentInChildren<Animator>();
 
-            if (!animator) return VRPlayerInput.kDefaultPlayerArmSpan;
+            if (!animator) return BeatSaberUtilities.kDefaultPlayerArmSpan;
 
             Transform leftShoulder = animator.GetBoneTransform(HumanBodyBones.LeftShoulder);
             Transform leftUpperArm = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
@@ -190,13 +189,13 @@ namespace CustomAvatar.Avatar
             if (!leftShoulder || !leftUpperArm || !leftLowerArm || !rightShoulder || !rightUpperArm || !rightLowerArm)
             {
                 _logger.Warning("Could not calculate avatar arm span due to missing bones");
-                return VRPlayerInput.kDefaultPlayerArmSpan;
+                return BeatSaberUtilities.kDefaultPlayerArmSpan;
             }
 
             if (!_leftHand || !_rightHand)
             {
                 _logger.Warning("Could not calculate avatar arm span due to missing tracking references");
-                return VRPlayerInput.kDefaultPlayerArmSpan;
+                return BeatSaberUtilities.kDefaultPlayerArmSpan;
             }
 
             float leftArmLength = Vector3.Distance(leftShoulder.position, leftUpperArm.position) + Vector3.Distance(leftUpperArm.position, leftLowerArm.position) + Vector3.Distance(leftLowerArm.position, _leftHand.position);

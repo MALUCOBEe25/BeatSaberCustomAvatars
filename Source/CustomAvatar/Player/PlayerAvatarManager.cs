@@ -14,9 +14,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+using CustomAvatar.Avatar;
 using CustomAvatar.Configuration;
 using CustomAvatar.Logging;
-using CustomAvatar.Tracking;
 using CustomAvatar.Utilities;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
 
-namespace CustomAvatar.Avatar
+namespace CustomAvatar.Player
 {
     public class PlayerAvatarManager : IInitializable, IDisposable
     {
